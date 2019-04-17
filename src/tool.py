@@ -1,4 +1,8 @@
 import os
+import pandas as pd
+import numpy as np
+import pprint
+
 
 
 def loadData(filePath, inv = False):
@@ -9,30 +13,42 @@ def loadData(filePath, inv = False):
     '''
     data = {}
     try:
-        with open(filePath) as file:
-            for line in file:
-                line = line.replace("\n", "")
-                tokens = line.split("\t")
+        dat=pd.read_csv(filePath)
+        for row in dat.loc[:, ['用户ID','电影名','评分']].iterrows():
+            user=row[1]['用户ID']
+            item=row[1]['电影名']
+            rating=row[1]['评分']
+            if inv == False:
+                data.setdefault(user, {})
+                data[user][item] = float(rating)
+            else:
+                data.setdefault(item, {})
+                data[item][user] = float(rating)
+        # with open(filePath) as file:
+        #     for line in file:
+        #         line = line.replace("\n", "")
+        #         tokens = line.split("\t")
                 
-                if len(tokens) < 2:
-                    continue
-                elif len(tokens) == 2:
-                    user = tokens[0]
-                    item = tokens[1]
-                    rating = 1
-                else:
-                    user = tokens[0]
-                    item = tokens[1]
-                    rating = tokens[2]
+        #         if len(tokens) < 2:
+        #             continue
+        #         elif len(tokens) == 2:
+        #             user = tokens[0]
+        #             item = tokens[1]
+        #             rating = 1
+        #         else:
+        #             user = tokens[0]
+        #             item = tokens[1]
+        #             rating = tokens[2]
                 
-                # Store data
-                if inv == False:
-                    data.setdefault(user, {})
-                    data[user][item] = float(rating)
-                else:
-                    data.setdefault(item, {})
-                    data[item][user] = float(rating)
-            file.close()
+        #         # Store data
+        #         if inv == False:
+        #             data.setdefault(user, {})
+        #             data[user][item] = float(rating)
+        #         else:
+        #             data.setdefault(item, {})
+        #             data[item][user] = float(rating)
+        #     file.close()
+
     except IOError as e:
         print(e)
     return data
@@ -58,3 +74,8 @@ def getFilename(filePath):
 def getFilenameWithoutExtension(filePath):
     fullname = getFilename(filePath)
     return os.path.splitext(fullname)[0]
+
+if __name__ == '__main__':
+    a=pd.read_csv('user.csv')
+    for row in a.loc[:, ['用户ID','电影名','评分']].iterrows():
+        print(row[1]['电影名'])
