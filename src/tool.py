@@ -13,11 +13,13 @@ def loadData(filePath, inv = False):
     '''
     data = {}
     try:
+        print('Load CSV')
         dat=pd.read_csv(filePath)
-        for row in dat.loc[:, ['用户ID','电影名','评分']].iterrows():
-            user=row[1]['用户ID']
-            item=row[1]['电影名']
-            rating=row[1]['评分']
+        print('Convert CSV')
+        for _,row in dat.iterrows():
+            user=row['用户名']
+            item=row['电影名']
+            rating=row['评分']
             if inv == False:
                 data.setdefault(user, {})
                 data[user][item] = float(rating)
