@@ -160,7 +160,7 @@ class UserBased(CollaborativeFiltering):
         recommendation = [item for similarity, item in predictedScores]
         if topN != None:
             recommendation = recommendation[0:topN]
-        return recommendation
+        return recommendation,sorted(self.prefs[user],reverse = True)[0:topN]
     
 class ItemBased(CollaborativeFiltering):
     '''

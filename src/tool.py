@@ -2,7 +2,17 @@ import os
 import pandas as pd
 import numpy as np
 import pprint
+import os.path
+import pickle
 
+
+def loadCache(filePath, inv = False):
+    cacheFileName=os.path.splitext(os.path.basename(filePath))[0]+'.cache'
+    data={}	
+    if os.path.isfile(cacheFileName):
+        with open(cacheFileName,'rb') as f:
+            data=pickle.load(f)
+    return data
 
 
 def loadData(filePath, inv = False):
@@ -13,19 +23,24 @@ def loadData(filePath, inv = False):
     '''
     data = {}
     try:
-        print('Load CSV')
-        dat=pd.read_csv(filePath)
-        print('Convert CSV')
-        for _,row in dat.iterrows():
-            user=row['用户名']
-            item=row['电影名']
-            rating=row['评分']
-            if inv == False:
-                data.setdefault(user, {})
-                data[user][item] = float(rating)
-            else:
-                data.setdefault(item, {})
-                data[item][user] = float(rating)
+        data=loadCache(filePath, inv)
+        if not data:
+            cacheFileName=os.path.splitext(os.path.basename(filePath))[0]+'.cache'
+            print('Load CSV')
+            dat=pd.read_csv(filePath)
+            print('Convert CSV')
+            for _,row in dat.iterrows():
+                user=row['用户名']
+                item=row['电影名']
+                rating=row['评分']
+                if inv == False:
+                    data.setdefault(user, {})
+                    data[user][item] = float(rating)
+                else:
+                    data.setdefault(item, {})
+                    data[item][user] = float(rating)
+            with open(cacheFileName,'wb') as f:
+                pickle.dump(data,f)
         # with open(filePath) as file:
         #     for line in file:
         #         line = line.replace("\n", "")

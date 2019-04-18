@@ -4,7 +4,7 @@ testSet = trainSet
 from recommender import UserBased
 ubcf = UserBased()
 ubcf.loadData(trainSet)
-model = ubcf.buildModel(nNeighbors=30)
+model = ubcf.loadExtModel('ubcf.model')
 import validation
 result = validation.evaluateRecommender(testSet, ubcf, model=model, topN=10)
 print(result)
